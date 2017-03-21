@@ -13,13 +13,13 @@ public class KafkaConsumerServer implements MessageListener<String, String>
 
 	public void onMessage(ConsumerRecord<String, String> data)
 	{
-		System.out.println("kafka生产数据开始......");
-		System.out.println(data.topic());
-		System.out.println(data.offset());
-		System.out.println(data.partition());
+		System.out.println("kafka消费数据开始......");
+		System.out.println("topic:"+data.topic());
+		System.out.println("offset:"+data.offset());
+		System.out.println("分区数:"+data.partition());
 		System.out.println(data.value());
 		System.out.println(data.key());
-		System.out.println("kafka生产数据END......");
+		System.out.println("kafka消费数据END......");
 	}
 	
 }

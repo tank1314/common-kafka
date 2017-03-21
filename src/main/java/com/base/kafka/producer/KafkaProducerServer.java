@@ -7,6 +7,7 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
+import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFuture;
 
 import com.alibaba.fastjson.JSON;
@@ -18,12 +19,12 @@ import com.base.kafka.constant.KafkaConstant;
  * @author Administrator
  * 
  */
+@Component
 public class KafkaProducerServer
 {
 	
-	@SuppressWarnings("rawtypes")
 	@Autowired
-	private KafkaTemplate KafkaTemplate;
+	private KafkaTemplate<String, String> kafkaTemplate;
 	
 	/**
 	 * 根据key的hash数值选择数据分区
@@ -31,7 +32,7 @@ public class KafkaProducerServer
 	 * @param partitionNum
 	 * @return
 	 */
-	public int getPartitionIndex(String key, int partitionNum)
+	private int getPartitionIndex(String key, int partitionNum)
 	{
 		if (key == null)
 		{
@@ -40,7 +41,8 @@ public class KafkaProducerServer
 		}
 		else
 		{
-			return Math.abs(key.hashCode()) % partitionNum;
+			int partion = Math.abs(key.hashCode()) % partitionNum;
+			return partion;
 		}
 	}
 	
@@ -53,22 +55,21 @@ public class KafkaProducerServer
 	 * @param partitionNum  分区数(最大值为broker中设置的最大值)
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public Map<String, Object> sendMsgForTemplate(String topic, String key, Object data, boolean isPartition, int partitionNum)
 	{
-		String keyCode = key + JSON.toJSONString(data).hashCode();
+		String keyCode = key + "-" + data.hashCode();
 		String dataMsg = JSON.toJSONString(data);
 		if (isPartition)
 		{
 			//计算分区
 			int partition = getPartitionIndex(keyCode, partitionNum);
-			ListenableFuture<SendResult<String, String>> result = KafkaTemplate.send(topic, partition, keyCode, dataMsg);
+			ListenableFuture<SendResult<String, String>> result = kafkaTemplate.send(topic, partition, keyCode, dataMsg);
 			Map<String, Object> map = checkKafkaResult(result);
 			return map;
 		}
 		else
 		{
-			ListenableFuture<SendResult<String, String>> result = KafkaTemplate.send(topic, keyCode, dataMsg);
+			ListenableFuture<SendResult<String, String>> result = kafkaTemplate.send(topic, keyCode, dataMsg);
 			Map<String, Object> map = checkKafkaResult(result);
 			return map;
 		}
