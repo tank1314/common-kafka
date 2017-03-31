@@ -20,7 +20,7 @@ public class KafkaProducerListener implements ProducerListener
 	 */
 	public void onSuccess(String topic, Integer partition, Object key, Object value, RecordMetadata recordMetadata)
 	{
-		System.out.println("生产者成功调用测试....");
+		//System.out.println("生产者成功调用测试...."+recordMetadata.offset()+"===="+value);
 	}
 
 	/**

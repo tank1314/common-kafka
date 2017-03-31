@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -22,6 +24,8 @@ import com.base.kafka.constant.KafkaConstant;
 @Component
 public class KafkaProducerServer
 {
+	
+	Logger logger = LoggerFactory.getLogger(KafkaProducerServer.class) ;
 	
 	@Autowired
 	private KafkaTemplate<String, String> kafkaTemplate;
