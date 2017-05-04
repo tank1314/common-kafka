@@ -20,16 +20,16 @@ public class KafkaTestMain
 	public static void main(String[] args)
 	{
 		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
-		//proc(context);
-		KafkaProducerServer kafkaProducer = context.getBean("kafkaProducerServer", KafkaProducerServer.class);
+		proc(context);
+		//KafkaProducerServer kafkaProducer = context.getBean("kafkaProducerServer", KafkaProducerServer.class);
 	}
 	
 	public static void proc(ApplicationContext context)
 	{
 		final KafkaProducerServer kafkaProducer = context.getBean("kafkaProducerServer", KafkaProducerServer.class);
-		ExecutorService fixThreadPool = Executors.newFixedThreadPool(500);
+		ExecutorService fixThreadPool = Executors.newFixedThreadPool(50);
 		final long startTime = System.currentTimeMillis();
-		for (int i = 0; i < 2000000; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			final int index = i;
 			fixThreadPool.execute(new Runnable()
@@ -38,17 +38,17 @@ public class KafkaTestMain
 				{
 					try
 					{
-						String topic = "consumer";
+						String topic = "defaultTopic";
 						Integer partitionNum = 4; //
-						String key = "test1";//用来生成key 避免随机分配分区
+						String key = "one";//用来生成key 避免随机分配分区
 						EmployeeCommond employee = new EmployeeCommond();
-						employee.setAddress("中国-天涯海角" + index);
+						employee.setAddress("中国-天涯海角2" + index);
 						employee.setAge(25);
 						employee.setEmpName("ABC");
 						employee.setEmpNo("6xx8");
 						employee.setEmpSex("男");
 						Map<String, Object> res = kafkaProducer.sendMsgForTemplate(topic, key, employee, true, partitionNum);
-						System.out.println(res + "耗时：" + (System.currentTimeMillis() - startTime) + ":ms");
+						System.out.println(res);
 					}
 					catch (Exception e)
 					{

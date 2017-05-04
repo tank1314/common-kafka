@@ -61,19 +61,20 @@ public class KafkaProducerServer
 	 */
 	public Map<String, Object> sendMsgForTemplate(String topic, String key, Object data, boolean isPartition, int partitionNum)
 	{
-		String keyCode = key + "-" + data.hashCode();
+		
 		String dataMsg = JSON.toJSONString(data);
 		if (isPartition)
 		{
 			//计算分区
+			String keyCode = key + "-" + data.hashCode();
 			int partition = getPartitionIndex(keyCode, partitionNum);
-			ListenableFuture<SendResult<String, String>> result = kafkaTemplate.send(topic, partition, keyCode, dataMsg);
+			ListenableFuture<SendResult<String, String>> result = kafkaTemplate.send(topic, partition, key, dataMsg);
 			Map<String, Object> map = checkKafkaResult(result);
 			return map;
 		}
 		else
 		{
-			ListenableFuture<SendResult<String, String>> result = kafkaTemplate.send(topic, keyCode, dataMsg);
+			ListenableFuture<SendResult<String, String>> result = kafkaTemplate.send(topic, key, dataMsg);
 			Map<String, Object> map = checkKafkaResult(result);
 			return map;
 		}

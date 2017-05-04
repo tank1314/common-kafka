@@ -43,10 +43,11 @@ public class KafkaConsumerServer implements MessageListener<String, Object>, Ini
 		
 		if (data == null)
 		{
-			logger.info("消费者暂未收到数据...");
+			logger.warn("消费者暂未收到数据...");
 			return;
 		}
 		logger.info("消费者消费数据START...");
+		System.out.println("key:"+data.key());
 		System.out.println("partion:" + data.partition());
 		System.out.println("offset:" + data.offset());
 		System.out.println(data.value());
